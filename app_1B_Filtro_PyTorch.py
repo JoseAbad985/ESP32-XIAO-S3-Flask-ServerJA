@@ -24,8 +24,6 @@ torch_kernel = torch.tensor([
 torch_kernel = torch_kernel.unsqueeze(0).unsqueeze(0)
 
 def add_gaussian_noise_gray(image, mean=0, std_dev=30):
-    # --- ESTA FUNCIÓN ESTÁ CORREGIDA ---
-    # Esta función SÍ ACEPTA GRISES
     image_int16 = image.astype(np.int16)
     noise = np.zeros(image.shape, np.int16)
     cv2.randn(noise, mean, std_dev) 

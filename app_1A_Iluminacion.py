@@ -46,10 +46,7 @@ def video_capture():
                 gamma_corrected = adjust_gamma(frame, gamma=gamma_value)
 
                 hist_global_bgr = cv2.cvtColor(hist_global, cv2.COLOR_GRAY2BGR)
-                
-                # --- LÍNEA CORREGIDA ---
-                # Antes decía: cv2.cvtColor(clahe, ...)
-                # Ahora dice: cv2.cvtColor(hist_clahe, ...)
+            
                 clahe_bgr = cv2.cvtColor(hist_clahe, cv2.COLOR_GRAY2BGR)
 
                 total_image = np.zeros((height, width * 4, 3), dtype=np.uint8)
