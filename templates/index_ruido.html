@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Práctica 1-B: Ruido con Sliders</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; display: grid; place-items: center; min-height: 90vh; background: #f4f4f9; }
+        .container { background: #ffffff; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        h1 { text-align: center; color: #333; margin-top: 0; }
+        /* El contenedor de video es importante */
+        #stream_container { width: 100%; }
+        #stream_container img { 
+            display: block; 
+            width: 100%; 
+            height: auto; 
+            border-radius: 8px; 
+            border: 1px solid #ddd; 
+        }
+        .controls { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 1.5rem; }
+        .control-group { background: #f9f9f9; padding: 1rem; border-radius: 8px; }
+        label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: #555; }
+        input[type="range"] { width: 100%; box-sizing: border-box; }
+        span { font-family: "Courier New", monospace; background: #eee; padding: 2px 5px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tarea 1-B.1: Ruido en Color (con Sliders)</h1>
+        
+        <div id="stream_container">
+            <img id="video_feed" alt="Cargando stream...">
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="gauss_slider">Ruido Gaussiano (StdDev): <span id="gauss_val">0</span></label>
+                <input type="range" id="gauss_slider" min="0" max="100" value="0" step="1">
+                
+                <label for="speckle_slider" style="margin-top: 1rem;">Ruido Speckle (Varianza): <span id="speckle_val">0.0</span></label>
+                <input type="range" id="speckle_slider" min="0.0" max="1.0" value="0.0" step="0.01">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Referencias a los controles (esto estaba bien)
+        const gaussSlider = document.getElementById('gauss_slider');
+        const speckleSlider = document.getElementById('speckle_slider');
+        const gaussVal = document.getElementById('gauss_val');
+        const speckleVal = document.getElementById('speckle_val');
+
+        // PASO 2: Referencia al CONTENEDOR, no a la imagen
+        const streamContainer = document.getElementById('stream_container');
+
+        function updateStream() {
+            const gauss = gaussSlider.value;
+            const speckle = speckleSlider.value;
+            
+            // Actualiza el texto (esto funcionaba)
+            gaussVal.textContent = gauss;
+            speckleVal.textContent = speckle;
+
+            // --- INICIO DE LA SOLUCIÓN ---
+
+            // 1. Crear la nueva URL (el timestamp sigue siendo buena idea)
+            const timestamp = new Date().getTime();
+            const newSrc = `/video_stream?gauss=${gauss}&speckle=${speckle}&t=${timestamp}`;
+
+            // 2. DESTRUIR la imagen de video anterior.
+            // Esto es lo que rompe la conexión 'multipart' vieja.
+            streamContainer.innerHTML = ''; 
+
+            // 3. Crear una NUEVA etiqueta de imagen
+            const newImg = document.createElement('img');
+            newImg.src = newSrc;
+            newImg.alt = 'Cargando stream...';
+
+            // 4. Añadir la nueva imagen al contenedor.
+            // El navegador hará una nueva conexión a la URL correcta.
+            streamContainer.appendChild(newImg);
+            
+            // --- FIN DE LA SOLUCIÓN ---
+        }
+
+        // Detecta CADA VEZ que mueves el slider
+        gaussSlider.addEventListener('input', updateStream);
+        speckleSlider.addEventListener('input', updateStream);
+
+        // Carga el stream inicial cuando la página está lista
+        window.addEventListener('load', updateStream);
+    </script>
+</body>
+</html>
